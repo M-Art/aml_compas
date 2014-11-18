@@ -119,6 +119,45 @@ public class Compas extends Activity implements SensorEventListener {
 		mSensorManager.unregisterListener(this);
 	}
 
+	// zmienne stanu
+    private double q = 0.1;
+    private double r = 1000;
+    private double k = 0;
+    private double p = 0;
+    private double x1 = 0; // poprzedni stan
+    private double x2 = 0; // stan poprzedzający stan x1
+
+    // żeby usunąć problem z przeskakiwaniem kompasu
+    private double odejmij(double x, double y)
+    {
+    	double ret = x - y;
+    	
+    	if (ret >= 180)
+    	{
+    		ret = ret - 360;
+    	}
+    	else if (ret < -180)
+    	{
+    		ret = ret + 360;
+    	}
+    	
+    	return ret;
+    }
+    
+    // w razie gdyby wartość wyszła poza zakres [0, 360)
+    private double poprawZakres(double x) {
+    	double ret = x;
+    	
+        if (x >= 360) {
+        	ret = x - 360;
+        }
+        else if (x < 0) {
+        	ret = x + 360;
+        }
+        
+        return ret;
+    }
+
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		final float alpha = 0.96f;
@@ -145,6 +184,28 @@ public class Compas extends Activity implements SensorEventListener {
 	        }
 	        
 	        degree = (Math.round(degree*100.0))/100.0;
+	        
+	        double v = odejmij(x1, x2); // prędkość
+	        double x; // x1 i x2 przechowują stan, x jest tylko pomocnicze
+	        x = x1 + 0.9 * v; // x to stan poprzedni + prędkość, współczynnik 0.9 sobie wymyśliłem
+
+            x = poprawZakres(x); // x mogło wyjść poza [0, 360)
+	        
+	        // kalman
+	        p = p + q;
+	        k = p / (p + r);
+	        x = x + k * (odejmij(degree, x));
+            x = poprawZakres(x); // x mogło wyjść poza [0, 360)
+
+	        p = (1 - k) * p;
+	        
+	        // zapisanie do zmiennych stanu
+	        x2 = x1;
+	        x1 = x;
+	        		
+	    	// do dalszych obliczeń w tej metodzie
+	    	degree = x;
+	    	        
 	        
 	        tvHeading.setText("Heading: " + Double.toString(degree) + " degrees");
 
