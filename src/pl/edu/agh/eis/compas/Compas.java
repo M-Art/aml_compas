@@ -128,7 +128,7 @@ public class Compas extends Activity implements SensorEventListener {
     private double x2 = 0; // stan poprzedzający stan x1
 
     // żeby usunąć problem z przeskakiwaniem kompasu
-    private double odejmij(double x, double y)
+    double odejmij(double x, double y)
     {
     	double ret = x - y;
     	
@@ -145,7 +145,7 @@ public class Compas extends Activity implements SensorEventListener {
     }
     
     // w razie gdyby wartość wyszła poza zakres [0, 360)
-    private double poprawZakres(double x) {
+    double poprawZakres(double x) {
     	double ret = x;
     	
         if (x >= 360) {

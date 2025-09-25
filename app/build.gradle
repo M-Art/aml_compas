@@ -1,0 +1,29 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'pl.edu.agh.eid.compas'
+    compileSdkVersion 34
+
+    defaultConfig {
+        applicationId "pl.edu.agh.eid.compas"
+        minSdkVersion 14
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile '../AndroidManifest.xml'
+            java.srcDirs = ['../src']
+            res.srcDirs = ['../res']
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: '../libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.13.2'
+}

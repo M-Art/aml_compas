@@ -1,0 +1,9 @@
+# Gradle files
+.gradle/
+build/
+
+# App-specific build output
+app/build/
+
+# Local configuration
+local.properties
